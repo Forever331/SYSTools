@@ -1,0 +1,507 @@
+﻿<Window x:Class="MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        xmlns:local="clr-namespace:WPF_SYSTools"
+        mc:Ignorable="d"
+        Title="SYSTools" Height="650" Width="1100" WindowStyle="None" AllowsTransparency="True" Foreground="{x:Null}" Loaded="Window_Loaded" IsTabStop="False" Focusable="False" Visibility="Visible">
+
+    <Window.Resources>
+        <!-- ScrollViewer 滚动条 -->
+        <Style x:Key="ScrollBarThumb" TargetType="{x:Type Thumb}">
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="IsTabStop" Value="false"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Grid>
+                            <!--滚动条颜色-->
+                            <Border Background="#FF646464" CornerRadius="4"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="HorizontalScrollBarPageButton" TargetType="{x:Type RepeatButton}">
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Focusable" Value="false"/>
+            <Setter Property="IsTabStop" Value="false"/>
+            <Setter Property="Opacity" Value="0.2"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <Rectangle Fill="{TemplateBinding Background}" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="VerticalScrollBarPageButton" TargetType="{x:Type RepeatButton}">
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Focusable" Value="false"/>
+            <Setter Property="IsTabStop" Value="false"/>
+            <Setter Property="Opacity" Value="0.2"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <Rectangle Fill="{TemplateBinding Background}" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--滚动条上下按钮-->
+        <Style x:Key="VerticalScrollBarPageButton2" TargetType="{x:Type RepeatButton}">
+            <Setter Property="OverridesDefaultStyle"  Value="true"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Focusable" Value="false"/>
+            <Setter Property="IsTabStop" Value="false"/>
+            <Setter Property="Opacity"  Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <Rectangle Fill="#90000000" Width="0" Height="0"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="for_scrollbar" TargetType="{x:Type ScrollBar}">
+            <Setter Property="Stylus.IsPressAndHoldEnabled" Value="false"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="false"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Margin" Value="0,1,1,6"/>
+            <Setter Property="Width"  Value="10"/>
+            <Setter Property="MinWidth"  Value="5"/>
+            <Setter Property="Opacity"   Value="0.2"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollBar}">
+                        <Grid x:Name="Bg" SnapsToDevicePixels="true">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"></RowDefinition>
+                                <RowDefinition Height="*"></RowDefinition>
+                                <RowDefinition Height="auto"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <RepeatButton  Grid.Row="0" Style="{StaticResource VerticalScrollBarPageButton2}" Command="{x:Static ScrollBar.PageUpCommand}"/>
+                            <Track x:Name="PART_Track"   Grid.Row="1" IsEnabled="{TemplateBinding IsMouseOver}" IsDirectionReversed="true">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Style="{StaticResource VerticalScrollBarPageButton}" Command="{x:Static ScrollBar.PageUpCommand}"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Style="{StaticResource VerticalScrollBarPageButton}" Command="{x:Static ScrollBar.PageDownCommand}"/>
+                                </Track.IncreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource ScrollBarThumb}"/>
+                                </Track.Thumb>
+                            </Track>
+                            <RepeatButton Grid.Row="2" Style="{StaticResource VerticalScrollBarPageButton2}" Command="{x:Static ScrollBar.PageDownCommand}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="Orientation" Value="Horizontal">
+                    <Setter Property="Background"  Value="Transparent"/>
+                    <Setter Property="Margin" Value="1,0,6,1"/>
+                    <Setter Property="Height"   Value="5"/>
+                    <Setter Property="MinHeight"  Value="5"/>
+                    <Setter Property="Width"    Value="Auto"/>
+                    <Setter Property="Opacity" Value="0.2"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                <Grid x:Name="Bg" SnapsToDevicePixels="true">
+                                    <Track x:Name="PART_Track" IsEnabled="{TemplateBinding IsMouseOver}">
+                                        <Track.DecreaseRepeatButton>
+                                            <RepeatButton Style="{StaticResource HorizontalScrollBarPageButton}"  Command="{x:Static ScrollBar.PageLeftCommand}"/>
+                                        </Track.DecreaseRepeatButton>
+                                        <Track.IncreaseRepeatButton>
+                                            <RepeatButton Style="{StaticResource HorizontalScrollBarPageButton}"  Command="{x:Static ScrollBar.PageRightCommand}"/>
+                                        </Track.IncreaseRepeatButton>
+                                        <Track.Thumb>
+                                            <Thumb Style="{StaticResource ScrollBarThumb}"/>
+                                        </Track.Thumb>
+                                    </Track>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="for_scrollviewer"
+           TargetType="{x:Type ScrollViewer}">
+            <Setter Property="BorderBrush" Value="LightGray"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="True">
+                            <Grid Background="{TemplateBinding Background}">
+                                <ScrollContentPresenter  Cursor="{TemplateBinding Cursor}" Margin="{TemplateBinding Padding}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                                <ScrollBar x:Name="PART_VerticalScrollBar"
+                                       HorizontalAlignment="Right"
+                                       Maximum="{TemplateBinding ScrollableHeight}"
+                                       Orientation="Vertical"
+                                       Style="{StaticResource for_scrollbar}"
+                                       ViewportSize="{TemplateBinding ViewportHeight}"
+                                       Value="{TemplateBinding VerticalOffset}"
+                                       Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
+                                <ScrollBar x:Name="PART_HorizontalScrollBar"
+                                       Maximum="{TemplateBinding ScrollableWidth}"
+                                       Orientation="Horizontal"
+                                       Style="{StaticResource for_scrollbar}"
+                                       VerticalAlignment="Bottom"
+                                       Value="{TemplateBinding HorizontalOffset}"
+                                       ViewportSize="{TemplateBinding ViewportWidth}"
+                                       Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <EventTrigger RoutedEvent="ScrollChanged" >
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                        Storyboard.TargetName="PART_VerticalScrollBar"
+                                        Storyboard.TargetProperty="Opacity"
+                                        To="0.8"
+                                        Duration="0:0:1"/>
+                                        <DoubleAnimation
+                                        Storyboard.TargetName="PART_VerticalScrollBar"
+                                        Storyboard.TargetProperty="Opacity"
+                                        To="0.2"
+                                        Duration="0:0:1"
+                                        BeginTime="0:0:1"/>
+                                        <DoubleAnimation
+                                        Storyboard.TargetName="PART_HorizontalScrollBar"
+                                        Storyboard.TargetProperty="Opacity"
+                                        To="0.8"
+                                        Duration="0:0:1"/>
+                                        <DoubleAnimation
+                                        Storyboard.TargetName="PART_HorizontalScrollBar"
+                                        Storyboard.TargetProperty="Opacity"
+                                        To="0.2"
+                                        Duration="0:0:1"
+                                        BeginTime="0:0:1"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseEnter"
+                                      SourceName="PART_VerticalScrollBar">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                        Storyboard.TargetName="PART_VerticalScrollBar"
+                                        Storyboard.TargetProperty="Opacity"
+                                        To="0.8"
+                                        Duration="0:0:0.7"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave"
+                                      SourceName="PART_VerticalScrollBar">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                        Storyboard.TargetName="PART_VerticalScrollBar"
+                                        Storyboard.TargetProperty="Opacity"
+                                        To="0.2"
+                                        Duration="0:0:0.7"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseEnter"
+                                      SourceName="PART_HorizontalScrollBar">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                        Storyboard.TargetName="PART_HorizontalScrollBar"
+                                        Storyboard.TargetProperty="Opacity"
+                                        To="0.8"
+                                        Duration="0:0:0.7"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave"
+                                      SourceName="PART_HorizontalScrollBar">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                        Storyboard.TargetName="PART_HorizontalScrollBar"
+                                        Storyboard.TargetProperty="Opacity"
+                                        To="0.2"
+                                        Duration="0:0:0.7"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--默认ScrollBar-->
+        <Style TargetType="ScrollBar" BasedOn="{StaticResource for_scrollbar}"/>
+
+        <!--默认ScrollView-->
+        <Style TargetType="ScrollViewer" BasedOn="{StaticResource for_scrollviewer}"/>
+    </Window.Resources>
+
+
+    <Grid Margin="0">
+
+
+
+        <tb:TaskbarIcon IconSource="Resources/SYSTools.ico" TrayMouseDoubleClick="TaskbarIcon_TrayMouseDoubleClick">
+
+            <!-- Set a simple context menu  -->
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu Background="White">
+                    <MenuItem x:Name="OpenSYS" Header="打开SYSTools" />
+                    <MenuItem x:Name="ExitSYS" Header="退出应用" />
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+        </tb:TaskbarIcon>
+
+
+
+
+        <StackPanel x:Name="SP_Sub" HorizontalAlignment="Left" Height="650" VerticalAlignment="Top" Width="100">
+            <Border  Background="#E0E0E0" HorizontalAlignment="Left" Height="650" VerticalAlignment="Top" Width="88" CornerRadius="0,20,20,0" MouseLeftButtonDown="Border_MouseLeftButtonDown">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="0">
+                    </DropShadowEffect>
+                </Border.Effect>
+            </Border>
+            <Image x:Name="HomeLOGO" ToolTip="工具箱LOGO 欢迎页" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Source="Resources/工具箱Logo.png" HorizontalAlignment="Left"  Height="40" Width="50" Margin="19,-625,0,0"/>
+            <Border BorderBrush="#FAFAFAFA" BorderThickness="1" HorizontalAlignment="Left" Height="2" VerticalAlignment="Top" Width="68"  CornerRadius="0.5,0.5,0.5,0.5" Margin="10,-570,0,0"/>
+
+
+            <Button x:Name="Info" Style="{StaticResource MaterialDesignFloatingActionButton}" ToolTip="电脑硬件信息识别" 
+                HorizontalAlignment="Left" VerticalAlignment="Top" Width="68"  Height="68" BorderBrush="#FFEEEEEE" Background="#FF616161" IsTabStop="False" RenderTransformOrigin="0.469,0.376" Margin="10,-550,0,0" Focusable="False">
+                <materialDesign:PackIcon Kind="DesktopMac" Height="30" Width="30" />
+            </Button>
+
+            <Button x:Name="Apps" Style="{StaticResource MaterialDesignFloatingActionButton}" ToolTip="常规电脑硬件工具" 
+                    HorizontalAlignment="Left" VerticalAlignment="Top" Width="68"  Height="68" BorderBrush="#FFEEEEEE" Background="#FF616161" IsTabStop="False" Margin="10,-462,0,0" Focusable="False">
+                <materialDesign:PackIcon Kind="Apps" Height="30" Width="30" />
+            </Button>
+
+            <Button x:Name="Over" Style="{StaticResource MaterialDesignFloatingActionButton}" ToolTip="超频或BIOS修改工具" 
+                HorizontalAlignment="Left" VerticalAlignment="Top" Width="68" Height="68" BorderBrush="#FFEEEEEE" Background="#FF616161" IsTabStop="False" Margin="10,-372,0,0" Focusable="False">
+                <materialDesign:PackIcon Kind="Owl" Height="30" Width="30" />
+            </Button>
+
+            <Button x:Name="Benchmark" Style="{StaticResource MaterialDesignFloatingActionButton}" ToolTip="压力测试工具" 
+                HorizontalAlignment="Left" VerticalAlignment="Top" Width="68"  Height="68" BorderBrush="#FFEEEEEE" Background="#FF616161" IsTabStop="False" Margin="10,-282,0,0" Focusable="False">
+                <materialDesign:PackIcon Kind="Whatshot" Height="30" Width="30" />
+            </Button>
+
+            <Button x:Name="WActivate" Style="{StaticResource MaterialDesignFloatingActionButton}" ToolTip="Windows Activate" 
+                HorizontalAlignment="Left" VerticalAlignment="Top" Width="68"  Height="68" BorderBrush="#FFEEEEEE" Background="#FF616161" IsTabStop="False" Margin="10,-80,0,0" Focusable="False" >
+                <materialDesign:PackIcon Kind="Cat" Height="30" Width="30" />
+            </Button>
+        </StackPanel>
+
+        <StackPanel x:Name="SP_CMbutton" HorizontalAlignment="Right" Height="26" Margin="0" VerticalAlignment="Top" Width="90" d:IsLocked="True">
+            <Button x:Name="Minus_Button" Content="{materialDesign:PackIcon Minus}" ToolTip="最小化" 
+                HorizontalAlignment="Left" Width="45"    Height="26" Cursor="Arrow" Background="#FFA0A0A0" BorderBrush="#FFA0A0A0" IsTabStop="False" VerticalAlignment="Center" Margin="0" Focusable="False"  />
+            <Button x:Name="Close_Button" Content="{materialDesign:PackIcon Close}" ToolTip="关闭"  Width="45"  Height="26" Cursor="Arrow" BorderBrush="#FFDD2C00" Background="#FFDD2C00" IsTabStop="False" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,-26,0,0" Focusable="False"  />
+        </StackPanel>
+
+        <StackPanel x:Name="SP_Main" HorizontalAlignment="Left" Width="1000" Margin="100,0,0,0" >
+            <StackPanel Orientation="Horizontal" Height="62.934" VerticalAlignment="Center" Margin="291.918,68,291.918,0" HorizontalAlignment="Center">
+                <materialDesign:TransitioningContent OpeningEffect="{materialDesign:TransitionEffect FadeIn}">
+                    <TextBlock Foreground="Black" HorizontalAlignment="Center" Margin="0,4" VerticalAlignment="Center"><InlineUIContainer>
+                                    <materialDesign:PackIcon x:Name="UserSEgg" Height="50" Kind="Cat" Width="50" HorizontalAlignment="Center" Margin="0,0,0,-10" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="0" ToolTip="" Focusable="False"/>
+                                </InlineUIContainer><Run Text=" "/><InlineUIContainer>
+                                    <TextBlock VerticalAlignment="Center" Text="欢迎使用SYSTools工具箱" Foreground="Black" FontSize="32 " HorizontalAlignment="Center" Padding="0,0,0,8" />
+                                </InlineUIContainer></TextBlock>
+                </materialDesign:TransitioningContent>
+
+
+            </StackPanel>
+            <materialDesign:Card x:Name="Card_About" Background="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" Foreground="#DDFFFFFF" Padding="8" UniformCornerRadius="6" Margin="0,45,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" Width="942" Height="299">
+                <materialDesign:TransitioningContent OpeningEffect="{materialDesign:TransitionEffect FadeIn}" Margin="2,-1.5,1.5,1.5">
+                    <Grid Margin="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="231*"/>
+                            <ColumnDefinition Width="231*"/>
+                            <ColumnDefinition Width="231*"/>
+                            <ColumnDefinition Width="231*"/>
+                        </Grid.ColumnDefinitions>
+                        <materialDesign:PackIcon Kind="MicrosoftWindows"  HorizontalAlignment="Center" VerticalAlignment="Top" Height="100" Width="100" Margin="65.75,28.3,65.75,0" Focusable="False"/>
+                        <TextBlock Block.TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" Width="211.5" Height="51.884" Margin="10,167.458,10,30.658"><Run Text="简单易用"/><Run Text=" 专为Windows设计"/><Run/><LineBreak/><Run Text="基于"/><Run Text=".Net 4.6制作"/><LineBreak/></TextBlock>
+                        <materialDesign:PackIcon Kind="MaterialDesign"  HorizontalAlignment="Center" VerticalAlignment="Top" Height="100" Width="100" Grid.Column="1" Margin="65.75,28.3,65.75,0" Focusable="False"/>
+                        <TextBlock Block.TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" Width="211.5" Height="51.884" Margin="10,167.458,10,30.658" Grid.Column="1"><Run Text="WPF"/><Run Text=" UI"/><LineBreak/><Run Text="Material Design"/><Run Text=" In XAML"/></TextBlock>
+                        <materialDesign:PackIcon Kind="AccountQuestionMarkOutline"  HorizontalAlignment="Center" VerticalAlignment="Top" Height="100" Width="100" Grid.Column="2" Margin="65.75,28.3,65.75,0" Focusable="False"/>
+                        <TextBlock Block.TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" Width="211.5" Height="51.884" Margin="10,167.458,10,30.658" Grid.Column="2"><Run Text="有疑问 请加群"/><LineBreak/><Run Text="反馈问题&amp;提出意见"/></TextBlock>
+                        <materialDesign:PackIcon Kind="Github"  HorizontalAlignment="Center" VerticalAlignment="Top" Height="100" Width="100" Grid.Column="3" Margin="65.75,28.3,65.75,0" Focusable="False"/>
+                        <TextBlock Block.TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" Width="211.5" Height="51.884" Margin="10,167.458,10,30.658" Grid.Column="3"><Run Text="软件开源"/><LineBreak/><Run Text="("/><Run Text="Don't be evil"/><Run Text=")"/></TextBlock>
+                    </Grid>
+                </materialDesign:TransitioningContent>
+            </materialDesign:Card>
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="28.875,0,461.125,0" >
+
+                <Button x:Name="Webhome" Style="{StaticResource MaterialDesignFloatingActionButton}" ToolTip="软件官网 (目前尚未完成)" 
+                    HorizontalAlignment="Left" VerticalAlignment="Center" Width="70" Margin="2,43.5,0,55.5" Height="70" BorderBrush="#FFEEEEEE" Background="#FF616161" IsTabStop="False" Focusable="False" >
+                    <materialDesign:PackIcon Kind="HomeLock" Height="30" Width="30" />
+                </Button>
+
+                <Button x:Name="QQ" Style="{StaticResource MaterialDesignFloatingActionButton}" ToolTip="软件QQ群" 
+                    HorizontalAlignment="Left" VerticalAlignment="Center" Width="70" Margin="162,43.5,0,55.5" Height="70" BorderBrush="#FFEEEEEE" Background="#FF616161" IsTabStop="False" Focusable="False">
+                    <materialDesign:PackIcon Kind="Qqchat" Height="30" Width="30" />
+                </Button>
+                <Button x:Name="Github" Style="{StaticResource MaterialDesignFloatingActionButton}" ToolTip="软件开源" 
+                    HorizontalAlignment="Left" VerticalAlignment="Center" Width="70" Margin="252,43.5,0,55.5" Height="70" BorderBrush="#FFEEEEEE" Background="#FF616161" IsTabStop="False" Focusable="False" >
+                    <materialDesign:PackIcon Kind="Github" Height="30" Width="30" />
+                </Button>
+                <Button x:Name="BiliBIli" Style="{StaticResource MaterialDesignFloatingActionButton}" ToolTip="BiliBili" 
+                    HorizontalAlignment="Left" VerticalAlignment="Center" Width="70" Margin="342,43.5,0,55.5" Height="70" BorderBrush="#FFEEEEEE" Background="#FF616161"  IsTabStop="False" Focusable="False" >
+                    <Image Source="Resources/BiliBili.png"/>
+                </Button>
+                <Button x:Name="CoolApk" Style="{StaticResource MaterialDesignFloatingActionButton}" ToolTip="酷安账号" 
+                    HorizontalAlignment="Left" VerticalAlignment="Center" Width="70" Margin="432,43.5,0,55.5" Height="70" BorderBrush="#FFEEEEEE" Background="#FF616161" IsTabStop="False" Focusable="False" >
+                    <Image Source="Resources/Coolapk.png"/>
+                </Button>
+                <materialDesign:Snackbar x:Name="HomeSnackbar" IsActive="False" Margin="0,0,0,-6" Padding="0" IsTabStop="False" Focusable="False" >
+                    <materialDesign:SnackbarMessage x:Name="HomeSnackbarMessage" ActionContent="好的" IsTabStop="False" Focusable="False" />
+                </materialDesign:Snackbar>
+            </Grid>
+            <materialDesign:Card Background="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" Foreground="White" Padding="8" UniformCornerRadius="6" Margin="0,-165,29,0" HorizontalAlignment="Right" VerticalAlignment="Center" Width="400" Height="150" RenderTransformOrigin="0.5,0.5" d:IsLocked="True">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25*"/>
+                        <RowDefinition Height="109*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Block.TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" TextWrapping="Wrap" Text="一言卡片(Hitokoto Card)" Grid.Row="0" />
+                    <TextBlock x:Name="Hitokoto" Block.TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" TextWrapping="Wrap" Text="TextBlock" Grid.Row="1"/>
+                </Grid>
+            </materialDesign:Card>
+
+        </StackPanel>
+
+        <StackPanel x:Name="SP_Info" HorizontalAlignment="Left" Width="1000" Margin="100,0,0,0" Visibility="Hidden" d:IsLocked="True">
+            <TextBlock TextWrapping="Wrap" Text="硬件与系统信息检测" HorizontalAlignment="Left" Width="230" Height="34" Foreground="Black" FontSize="25" Margin="44,23,0,0" FontWeight="Bold" d:IsLocked="True" />
+            <Border  HorizontalAlignment="Left" Height="550" VerticalAlignment="Top" Width="950" CornerRadius="20" MouseLeftButtonDown="Border_MouseLeftButtonDown" Margin="25,20,25,0">
+                <Border.Background>
+                    <SolidColorBrush Color="#E0E0E0"/>
+                </Border.Background>
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="0">
+                    </DropShadowEffect>
+                </Border.Effect>
+                <StackPanel Margin="10">
+                    <ListBox x:Name="Info_ListBox" FontSize="15" ScrollViewer.HorizontalScrollBarVisibility="Auto" Height="530" Focusable="False">
+                    </ListBox>
+                </StackPanel>
+            </Border>
+
+            <Button x:Name="Info_Test" Style="{StaticResource MaterialDesignFloatingActionButton}" ToolTip="ん?" 
+                    HorizontalAlignment="Right" VerticalAlignment="Center" Width="70" Margin="0,-110,55,0" Height="70" BorderBrush="#FFEEEEEE" Background="#FF616161" IsTabStop="False" Focusable="False" >
+                <materialDesign:PackIcon Kind="GoogleDownasaur" Height="30" Width="30" />
+            </Button>
+        </StackPanel>
+        <StackPanel x:Name="SP_Apps" HorizontalAlignment="Left" Width="1000" Margin="100,0,0,0" Visibility="Hidden" d:IsLocked="True" >
+            <TextBlock TextWrapping="Wrap" Text="常规电脑硬件检测工具" HorizontalAlignment="Left" Width="250" Height="34" Foreground="Black" FontSize="25" Margin="44,23,0,0" FontWeight="Bold" />
+            <ScrollViewer x:Name="App_SV" Margin="0,23,0,0" Focusable="False" Height="570">
+                <Grid x:Name="App_Grid" Height="750" Margin="0">
+                    <Grid.RowDefinitions>
+
+                        <RowDefinition Height="310"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="210"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="210"/>
+
+
+                    </Grid.RowDefinitions>
+
+                    <Border BorderThickness="0" HorizontalAlignment="Center" Height="6" VerticalAlignment="Center" Width="950" Margin="25,2" Grid.Row="1" Background="#616161" CornerRadius="2"/>
+                    <Border BorderThickness="0" HorizontalAlignment="Center" Height="6" VerticalAlignment="Center" Width="950" Margin="25,2" Grid.Row="3" Background="#616161" CornerRadius="2"/>
+
+
+                    <materialDesign:Card x:Name="HDCard" HorizontalAlignment="Left" VerticalAlignment="Center" Height="150" Width="150" IsTabStop="False" ToolTip="硬盘工具(该列为正常检测和分区)" Margin="30,60,0,100">
+                        <Grid HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Width="130" Height="130">
+                            <materialDesign:PackIcon Kind="Harddisk" Height="100" Width="100" Foreground="#212121" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Grid>
+                    </materialDesign:Card>
+
+                    <Button x:Name="AS_SSD" HorizontalAlignment="Left" Margin="210,5,0,0" VerticalAlignment="Top" Width="100" Height="100"  IsTabStop="False" Focusable="False" Padding="0" Grid.IsSharedSizeScope="True" ToolTip="AS SSD Benchmark" BorderBrush="#E0E0E0" Foreground="#E0E0E0" Background="{x:Null}">
+                        <Image Source="Resources/AS SSD.png" Width="80" HorizontalAlignment="Center" VerticalAlignment="Center" Height="80"/>
+                    </Button>
+                    <Button x:Name="CrystalDiskInfo" HorizontalAlignment="Left" Margin="340,5,0,0" VerticalAlignment="Top" Width="100" Height="100"  IsTabStop="False" Focusable="False" Padding="0" Grid.IsSharedSizeScope="True" ToolTip="CrystalDiskInfo" BorderBrush="#E0E0E0" Foreground="#E0E0E0" Background="{x:Null}">
+                        <Image Source="Resources/CrystalDiskInfo.png" Width="65" HorizontalAlignment="Center" VerticalAlignment="Center" Height="65"/>
+                    </Button>
+                    <Button x:Name="CrystalDiskMark" HorizontalAlignment="Left" Margin="470,5,0,0" VerticalAlignment="Top" Width="100" Height="100"  IsTabStop="False" Focusable="False" Padding="0" Grid.IsSharedSizeScope="True" ToolTip="CrystalDiskMark" BorderBrush="#E0E0E0" Foreground="#E0E0E0" Background="{x:Null}">
+                        <Image Source="Resources/CrystalDiskMark.png" Width="65" HorizontalAlignment="Center" VerticalAlignment="Center" Height="65"/>
+                    </Button>
+                    <Button x:Name="HD_Tune" HorizontalAlignment="Left" Margin="600,5,0,0" VerticalAlignment="Top" Width="100" Height="100"  IsTabStop="False" Focusable="False" Padding="0" Grid.IsSharedSizeScope="True" ToolTip="HD Tune" BorderBrush="#E0E0E0" Foreground="#E0E0E0" Background="{x:Null}">
+                        <Image Source="Resources/HD Tune.png" Width="65" HorizontalAlignment="Center" VerticalAlignment="Center" Height="65"/>
+                    </Button>
+                    <Button x:Name="SSD_Z" HorizontalAlignment="Left" Margin="730,5,0,0" VerticalAlignment="Top" Width="100" Height="100"  IsTabStop="False" Focusable="False" Padding="0" Grid.IsSharedSizeScope="True" ToolTip="SSD-Z" BorderBrush="#E0E0E0" Foreground="#E0E0E0" Background="{x:Null}">
+                        <Image Source="Resources/SSD-Z.png" Width="65" HorizontalAlignment="Center" VerticalAlignment="Center" Height="65"/>
+                    </Button>
+                    <Button x:Name="PartAssist" HorizontalAlignment="Left" Margin="210,157.5,0,0" VerticalAlignment="Top" Width="100" Height="100"  IsTabStop="False" Focusable="False" Padding="0" Grid.IsSharedSizeScope="True" ToolTip="AOMEI Partition Assistant" BorderBrush="#E0E0E0" Foreground="#E0E0E0" Background="{x:Null}">
+                        <Image Source="Resources/PartAssist.png" Width="65" HorizontalAlignment="Center" VerticalAlignment="Center" Height="65"/>
+                    </Button>
+                    <Button x:Name="Disk_Benchmark" HorizontalAlignment="Left" Margin="860,5,0,0" VerticalAlignment="Top" Width="100" Height="100"  IsTabStop="False" Focusable="False" Padding="0" Grid.IsSharedSizeScope="True" ToolTip="ATTO Disk Benchmark" BorderBrush="#E0E0E0" Foreground="#E0E0E0" Background="{x:Null}">
+                        <Image Source="Resources/Disk Benchmark.png" Width="80" HorizontalAlignment="Center" VerticalAlignment="Center" Height="80"/>
+                    </Button>
+                    <Button x:Name="DiskGenius" HorizontalAlignment="Left" Margin="340,157.5,0,0" VerticalAlignment="Top" Width="100" Height="100"  IsTabStop="False" Focusable="False" Padding="0" Grid.IsSharedSizeScope="True" ToolTip="DiskGenius" BorderBrush="#E0E0E0" Foreground="#E0E0E0" Background="{x:Null}">
+                        <Image Source="Resources/DiskGenius.png" Width="65" HorizontalAlignment="Center" VerticalAlignment="Center" Height="65"/>
+                    </Button>
+
+                    <materialDesign:Card x:Name="HDRemoveCard" HorizontalAlignment="Left" VerticalAlignment="Top" Height="150" Width="150" IsTabStop="False" ToolTip="硬盘工具(该列为格式化专区等)" Margin="30,10,0,0" Grid.Row="2">
+                        <Grid HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Width="130" Height="130">
+                            <materialDesign:PackIcon Kind="HarddiskRemove" Height="100" Width="100" Foreground="#212121" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Grid>
+                    </materialDesign:Card>
+
+                    <Button x:Name="Victoria" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="100"  IsTabStop="False" Focusable="False" Padding="0" Grid.IsSharedSizeScope="True" ToolTip="Victoria" BorderBrush="#E0E0E0" Foreground="#E0E0E0" Background="{x:Null}" Grid.Row="2" Margin="210,35,0,0">
+                        <Image Source="Resources/Victoria.png" Width="65" HorizontalAlignment="Center" VerticalAlignment="Center" Height="65"/>
+                    </Button>
+                    <Button x:Name="LLFTOOL" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="100"  IsTabStop="False" Focusable="False" Padding="0" Grid.IsSharedSizeScope="True" ToolTip="LLFTOOL" BorderBrush="#E0E0E0" Foreground="#E0E0E0" Background="{x:Null}" Grid.Row="2" Margin="340,35,0,0">
+                        <Image Source="Resources/LLFTOOL.png" Width="65" HorizontalAlignment="Center" VerticalAlignment="Center" Height="65"/>
+                    </Button>
+
+                    <materialDesign:Card x:Name="Computer_Test" HorizontalAlignment="Left" VerticalAlignment="Top" Height="150" Width="150" IsTabStop="False" ToolTip="电脑详细信息检测工具" Margin="30,10,0,0" Grid.Row="4">
+                        <Grid HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Width="130" Height="130">
+                            <materialDesign:PackIcon Kind="Laptop" Height="90" Width="90" Foreground="#212121" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Grid>
+                    </materialDesign:Card>
+
+                    <Button x:Name="Aida64" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="100"  IsTabStop="False" Focusable="False" Padding="0" Grid.IsSharedSizeScope="True" ToolTip="Aida64" BorderBrush="#E0E0E0" Foreground="#E0E0E0" Background="{x:Null}" Grid.Row="4" Margin="210,35,0,0">
+                        <Image Source="Resources/Aida64.png" Width="65" HorizontalAlignment="Center" VerticalAlignment="Center" Height="65"/>
+                    </Button>
+                    <Button x:Name="CPU_Z" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="100"  IsTabStop="False" Focusable="False" Padding="0" Grid.IsSharedSizeScope="True" ToolTip="CPU-Z" BorderBrush="#E0E0E0" Foreground="#E0E0E0" Background="{x:Null}" Grid.Row="4" Margin="340,35,0,0">
+                        <Image Source="Resources/CPU-Z.png" Width="65" HorizontalAlignment="Center" VerticalAlignment="Center" Height="65"/>
+                    </Button>
+                    <Button x:Name="GPU_Z" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="100"  IsTabStop="False" Focusable="False" Padding="0" Grid.IsSharedSizeScope="True" ToolTip="GPU-Z" BorderBrush="#E0E0E0" Foreground="#E0E0E0" Background="{x:Null}" Grid.Row="4" Margin="470,35,0,0">
+                        <Image Source="Resources/GPU-Z.png" Width="65" HorizontalAlignment="Center" VerticalAlignment="Center" Height="65"/>
+                    </Button>
+                    <Button x:Name="HWMonitorPro" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="100"  IsTabStop="False" Focusable="False" Padding="0" Grid.IsSharedSizeScope="True" ToolTip="HWMonitorPro" BorderBrush="#E0E0E0" Foreground="#E0E0E0" Background="{x:Null}" Grid.Row="4" Margin="600,35,0,0">
+                        <Image Source="Resources/HWMonitorPro.png" Width="65" HorizontalAlignment="Center" VerticalAlignment="Center" Height="65"/>
+                    </Button>
+                    <Button x:Name="HWiNFO" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="100"  IsTabStop="False" Focusable="False" Padding="0" Grid.IsSharedSizeScope="True" ToolTip="HWiNFO" BorderBrush="#E0E0E0" Foreground="#E0E0E0" Background="{x:Null}" Grid.Row="4" Margin="730,35,0,0">
+                        <Image Source="Resources/HWiNFO.png" Width="65" HorizontalAlignment="Center" VerticalAlignment="Center" Height="65"/>
+                    </Button>
+                    <Button x:Name="DisplayX" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="100"  IsTabStop="False" Focusable="False" Padding="0" Grid.IsSharedSizeScope="True" ToolTip="DisplayX" BorderBrush="#E0E0E0" Foreground="#E0E0E0" Background="{x:Null}" Grid.Row="4" Margin="860,35,0,0">
+                        <Image Source="Resources/DisplayX.png" Width="65" HorizontalAlignment="Center" VerticalAlignment="Center" Height="65"/>
+                    </Button>
+
+                </Grid>
+
+            </ScrollViewer>
+            <materialDesign:Snackbar x:Name="AppSnackbar" IsActive="False" Margin="0,-62,0,0" Padding="0" VerticalAlignment="Bottom" >
+                <materialDesign:SnackbarMessage x:Name="AppSnackbarMessage" Content="错误！ 无法打开软件 请检查根目录文件夹内软件是否存在" ActionContent="好的" ActionClick="AppSnackbarMessage_ActionClick" Focusable="False" IsTabStop="False" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </materialDesign:Snackbar>
+        </StackPanel>
+
+    </Grid>
+
+</Window>
